@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hold The Line — Focus Habit Den ☁</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Quicksand:wght@400;500;600;700&display=swap');
+
+  :root{
+    --sky-top:#EAF7FF;
+    --sky-bottom:#FFFDF9;
+    --card:#FFFFFF;
+    --card-border:#DCEFFB;
+    --shadow:0 10px 26px rgba(143,202,232,0.28);
+    --text:#5B6B7A;
+    --text-muted:#9FB3C2;
+    --blue:#56BBE0;
+    --blue-deep:#3FA3CB;
+    --blue-tint:#E5F7FF;
+    --pink:#FF9FC0;
+    --pink-deep:#FF82AD;
+    --pink-tint:#FFEAF2;
+    --sun:#F6B93B;
+    --sun-tint:#FFF3D6;
+    --rain:#9C8FE0;
+    --rain-tint:#EFEBFC;
+    --clear:#56BBE0;
+    --clear-tint:#E5F7FF;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 55%, #FFFFFF 100%);
+    color:var(--text);
+    font-family:'Quicksand',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding:40px 20px 60px;
+    min-height:100vh;
+  }
+  .wrap{max-width:660px;margin:0 auto;position:relative;}
+
+  /* decorative clouds */
+  .cloud{position:absolute;pointer-events:none;z-index:0;opacity:0.9;}
+  .cloud svg{display:block;filter:drop-shadow(0 4px 10px rgba(143,202,232,0.25));}
+  .c1{top:-22px;right:-10px;width:120px;}
+  .c2{top:18px;left:-34px;width:80px;opacity:0.6;}
+  .c3{top:-10px;left:38%;width:54px;opacity:0.5;}
+
+  header{margin-bottom:28px;position:relative;z-index:1;}
+  .eyebrow{
+    font-family:'Quicksand',sans-serif;
+    font-weight:700;
+    font-size:12.5px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--blue-deep);
+    margin:0 0 8px;
+  }
+  h1{
+    font-family:'Fredoka',sans-serif;
+    font-weight:700;
+    font-size:42px;
+    line-height:1.05;
+    margin:0 0 12px;
+    letter-spacing:-0.01em;
+    background:linear-gradient(90deg, var(--blue-deep), var(--pink-deep));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    display:inline-block;
+  }
+  .sub{
+    color:var(--text-muted);
+    font-size:15px;
+    line-height:1.55;
+    max-width:480px;
+    margin:0;
+    font-weight:500;
+  }
+
+  .card{
+    background:var(--card);
+    border:1.5px solid var(--card-border);
+    border-radius:22px;
+    padding:22px 22px 24px;
+    margin-bottom:18px;
+    box-shadow:var(--shadow);
+    position:relative;
+    z-index:1;
+  }
+  .card-title{
+    font-family:'Quicksand',sans-serif;
+    font-weight:700;
+    font-size:12.5px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--blue-deep);
+    margin:0 0 16px;
+  }
+
+  /* chart */
+  .chart-svg{width:100%;height:auto;display:block;overflow:visible;}
+  .zone-label{
+    font-family:'Quicksand',sans-serif;
+    font-weight:700;
+    font-size:11px;
+    letter-spacing:0.05em;
+    fill:var(--text-muted);
+    text-anchor:middle;
+  }
+  .axis-label{
+    font-family:'Quicksand',sans-serif;
+    font-weight:600;
+    font-size:10.5px;
+    fill:var(--text-muted);
+    opacity:0.8;
+  }
+  .chart-caption{
+    color:var(--text-muted);
+    font-size:12px;
+    margin:10px 0 0;
+    line-height:1.5;
+  }
+
+  .message-box{
+    margin-top:16px;
+    padding:14px 18px;
+    border-radius:16px;
+    border:1.5px solid var(--sun);
+    background:var(--sun-tint);
+    font-size:14.5px;
+    line-height:1.55;
+    font-weight:500;
+    color:#5B6B7A;
+  }
+
+  .banner{
+    margin-bottom:18px;
+    padding:13px 18px;
+    border-radius:16px;
+    border:1.5px solid var(--rain);
+    background:var(--rain-tint);
+    font-size:14px;
+    line-height:1.5;
+    font-weight:500;
+    display:none;
+    position:relative;
+    z-index:1;
+  }
+
+  /* streak row */
+  .streak-row{display:flex;align-items:flex-end;gap:32px;flex-wrap:wrap;}
+  .stat-num{
+    font-family:'Fredoka',sans-serif;
+    font-weight:700;
+    font-size:42px;
+    line-height:1;
+    color:var(--blue-deep);
+  }
+  .stat-label{
+    font-family:'Quicksand',sans-serif;
+    font-weight:700;
+    font-size:11px;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+    margin-top:4px;
+  }
+  .stat-block.best .stat-num{font-size:26px;color:var(--pink-deep);}
+
+  /* habit rows */
+  .habit-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:10px 0;
+    border-bottom:1.5px dashed var(--card-border);
+  }
+  .habit-row:last-of-type{border-bottom:none;}
+  .chk{
+    position:relative;
+    width:26px;height:26px;flex:0 0 26px;
+    cursor:pointer;
+  }
+  .chk input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;}
+  .chk .circle{
+    position:absolute;inset:0;
+    border:2px solid var(--blue);
+    border-radius:50%;
+    background:#fff;
+    transition:background 0.15s, border-color 0.15s, transform 0.15s;
+  }
+  .chk .circle::after{
+    content:"";
+    position:absolute;left:7px;top:3px;width:7px;height:13px;
+    border:solid #fff;
+    border-width:0 3px 3px 0;
+    transform:rotate(45deg);
+    opacity:0;
+    transition:opacity 0.1s;
+  }
+  .chk input:checked + .circle{background:var(--pink);border-color:var(--pink-deep);transform:scale(1.05);}
+  .chk input:checked + .circle::after{opacity:1;}
+  .chk input:focus-visible + .circle{outline:2px solid var(--blue-deep);outline-offset:3px;}
+
+  .habit-label{flex:1;font-size:15px;line-height:1.4;font-weight:600;color:var(--text);}
+  .habit-row.done .habit-label{color:var(--text-muted);text-decoration:line-through;text-decoration-color:var(--card-border);}
+  .remove-btn{
+    background:var(--pink-tint);border:none;color:var(--pink-deep);
+    font-size:15px;line-height:1;cursor:pointer;padding:5px 9px;
+    border-radius:999px;opacity:0.55;transition:opacity 0.15s;
+  }
+  .remove-btn:hover,.remove-btn:focus-visible{opacity:1;}
+
+  .add-row{display:flex;gap:10px;margin-top:14px;}
+  .add-row input{
+    flex:1;
+    background:#fff;
+    border:1.5px solid var(--card-border);
+    border-radius:999px;
+    color:var(--text);
+    font-family:'Quicksand',sans-serif;
+    font-weight:600;
+    font-size:14px;
+    padding:11px 18px;
+  }
+  .add-row input::placeholder{color:var(--text-muted);font-weight:500;}
+  .add-row input:focus-visible{outline:2px solid var(--blue);outline-offset:1px;}
+  .add-row button{
+    background:var(--blue);
+    color:#fff;
+    border:none;
+    border-radius:999px;
+    font-family:'Quicksand',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    padding:11px 22px;
+    cursor:pointer;
+    transition:background 0.15s, transform 0.1s;
+  }
+  .add-row button:hover{background:var(--blue-deep);transform:translateY(-1px);}
+  .add-row button:focus-visible{outline:2px solid var(--blue-deep);outline-offset:2px;}
+
+  /* chain grid */
+  .chain-grid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:7px;
+  }
+  .day-sq{
+    aspect-ratio:1;
+    border-radius:10px;
+    border:1.5px solid var(--card-border);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Quicksand',sans-serif;
+    font-weight:600;
+    font-size:10.5px;
+    color:var(--text-muted);
+    background:#fff;
+  }
+  .day-sq.partial{background:var(--pink-tint);border-color:var(--pink);color:var(--text);}
+  .day-sq.full{background:var(--blue);border-color:var(--blue-deep);color:#fff;font-weight:700;}
+  .day-sq.before-start{opacity:0.3;}
+  .chain-foot{
+    color:var(--text-muted);
+    font-size:12px;
+    margin:12px 0 0;
+  }
+
+  footer{
+    text-align:right;
+    margin-top:6px;
+    position:relative;
+    z-index:1;
+  }
+  .reset-link{
+    background:none;border:none;
+    color:var(--text-muted);
+    font-family:'Quicksand',sans-serif;
+    font-weight:600;
+    font-size:12.5px;
+    text-decoration:underline;
+    cursor:pointer;
+    opacity:0.7;
+  }
+  .reset-link:hover{opacity:1;}
+
+  /* Custom Confirmation Modal Styling */
+  .modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(143, 202, 232, 0.4);
+    backdrop-filter:blur(4px);
+    z-index:100;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.2s ease;
+  }
+  .modal-overlay.active{
+    opacity:1;
+    pointer-events:all;
+  }
+  .modal-box{
+    background:var(--card);
+    border:2px solid var(--card-border);
+    border-radius:24px;
+    max-width:380px;
+    width:90%;
+    padding:24px;
+    box-shadow:var(--shadow);
+    text-align:center;
+    transform:scale(0.9);
+    transition:transform 0.2s ease;
+  }
+  .modal-overlay.active .modal-box{
+    transform:scale(1);
+  }
+  .modal-title{
+    font-family:'Fredoka',sans-serif;
+    font-size:22px;
+    color:var(--pink-deep);
+    margin:0 0 10px;
+  }
+  .modal-text{
+    font-size:14.5px;
+    line-height:1.5;
+    color:var(--text);
+    margin:0 0 20px;
+  }
+  .modal-actions{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+  }
+  .modal-btn{
+    font-family:'Quicksand',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    padding:10px 20px;
+    border-radius:999px;
+    cursor:pointer;
+    border:none;
+    transition:transform 0.1s, background 0.15s;
+  }
+  .modal-btn.keep{
+    background:var(--blue-tint);
+    color:var(--blue-deep);
+  }
+  .modal-btn.keep:hover{
+    background:var(--blue);
+    color:#fff;
+  }
+  .modal-btn.delete{
+    background:var(--pink-tint);
+    color:var(--pink-deep);
+  }
+  .modal-btn.delete:hover{
+    background:var(--pink-deep);
+    color:#fff;
+  }
+
+  @media (max-width:480px){
+    h1{font-size:32px;}
+    .card{padding:18px;}
+    .stat-num{font-size:34px;}
+    .c1{width:90px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    * {transition:none !important;}
+  }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="cloud c1"><svg viewBox="0 0 120 70" xmlns="http://www.w3.org/2000/svg"><path d="M20,55 Q5,55 5,40 Q5,25 22,25 Q25,10 45,10 Q65,3 75,20 Q97,13 102,35 Q117,35 117,50 Q117,65 100,65 L25,65 Q13,65 20,55 Z" fill="#FFFFFF"/></svg></div>
+  <div class="cloud c2"><svg viewBox="0 0 120 70" xmlns="http://www.w3.org/2000/svg"><path d="M20,55 Q5,55 5,40 Q5,25 22,25 Q25,10 45,10 Q65,3 75,20 Q97,13 102,35 Q117,35 117,50 Q117,65 100,65 L25,65 Q13,65 20,55 Z" fill="#FFFFFF"/></svg></div>
+  <div class="cloud c3"><svg viewBox="0 0 120 70" xmlns="http://www.w3.org/2000/svg"><path d="M20,55 Q5,55 5,40 Q5,25 22,25 Q25,10 45,10 Q65,3 75,20 Q97,13 102,35 Q117,35 117,50 Q117,65 100,65 L25,65 Q13,65 20,55 Z" fill="#FFFFFF"/></svg></div>
+
+  <header>
+    <p class="eyebrow">☁ focus habit den</p>
+    <h1>Hold the line</h1>
+    <p class="sub">Built for the exact week you'll want to quit — small, fluffy-soft steps, tracked gently, with a system that expects the dip instead of being thrown off by it.</p>
+  </header>
+
+  <div class="card">
+    <p class="card-title">Where you are</p>
+    <svg id="motivation-svg" class="chart-svg" viewBox="0 0 700 220" preserveAspectRatio="xMidYMid meet">
+      <rect x="0" y="6" width="140" height="194" fill="var(--sun-tint)" rx="12"></rect>
+      <rect x="140" y="6" width="240" height="194" fill="var(--rain-tint)" rx="12"></rect>
+      <rect x="380" y="6" width="320" height="194" fill="var(--clear-tint)" rx="12"></rect>
+      <line x1="140" y1="6" x2="140" y2="200" stroke="#fff" stroke-width="2" stroke-dasharray="3,5"></line>
+      <line x1="380" y1="6" x2="380" y2="200" stroke="#fff" stroke-width="2" stroke-dasharray="3,5"></line>
+
+      <text class="zone-label" x="70" y="20">SPARK ☀</text>
+      <text class="zone-label" x="260" y="20">THE DIP 🌧</text>
+      <text class="zone-label" x="540" y="20">AUTOMATIC ✨</text>
+
+      <path id="motivation-path" d="M0,110 C20,70 35,45 47,40 C75,30 100,55 117,90 C140,125 165,145 187,150 C210,155 240,175 257,185 C280,195 300,180 327,170 C360,158 390,145 420,130 C455,115 485,105 513,95 C545,85 575,78 607,70 C635,63 665,58 700,55"
+        fill="none" stroke="var(--blue)" stroke-opacity="0.6" stroke-width="3" stroke-linecap="round"></path>
+
+      <line id="curve-marker-line" x1="0" y1="0" x2="0" y2="200" stroke="var(--sun)" stroke-opacity="0.7" stroke-width="2" stroke-dasharray="3,3"></line>
+      <circle id="curve-marker" cx="0" cy="0" r="7" fill="var(--sun)" stroke="#fff" stroke-width="2.5"></circle>
+      <text id="curve-marker-label" class="zone-label" x="0" y="0" style="fill:var(--sun);font-weight:700;"></text>
+
+      <text class="axis-label" x="0" y="214">DAY 0</text>
+      <text class="axis-label" x="218" y="214">DAY 10</text>
+      <text class="axis-label" x="452" y="214">DAY 20</text>
+      <text class="axis-label" x="680" y="214" text-anchor="end">DAY 30</text>
+    </svg>
+    <p class="chart-caption">A soft little illustration, not a measurement of you specifically — but the shape (spark, dip, then clear skies) is consistent across most new habits. The marker shows roughly where you are.</p>
+    <div id="zone-message" class="message-box"></div>
+  </div>
+
+  <div id="missed-banner" class="banner"></div>
+
+  <div class="card">
+    <p class="card-title">Streak</p>
+    <div class="streak-row">
+      <div class="stat-block">
+        <div id="streak-num" class="stat-num">0</div>
+        <div class="stat-label">current streak</div>
+      </div>
+      <div class="stat-block best">
+        <div id="best-num" class="stat-num">0</div>
+        <div class="stat-label">best ever</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Today</p>
+    <div id="habit-list"></div>
+    <div class="add-row">
+      <input id="new-habit-input" type="text" placeholder="Add one more tiny cloud-sized habit" maxlength="80">
+      <button id="add-habit-btn">Add</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Your chain</p>
+    <div id="chain-grid" class="chain-grid"></div>
+    <p class="chain-foot">Solid blue = every habit done that day · Soft pink = at least one · One is always better than none ☁</p>
+  </div>
+
+  <footer>
+    <button id="reset-link" class="reset-link">Reset all data</button>
+  </footer>
+
+</div>
+
+<div id="delete-modal" class="modal-overlay">
+  <div class="modal-box">
+    <p class="modal-title">Hold on... ☁</p>
+    <p class="modal-text">Are you sure you want to remove this habit? Consistency stays steady when we adjust down, not completely away.</p>
+    <div class="modal-actions">
+      <button id="modal-cancel-btn" class="modal-btn keep">Keep Habit</button>
+      <button id="modal-confirm-btn" class="modal-btn delete">Remove It</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'tracker-data';
+  let state = null;
+  let habitIdToDelete = null;
+
+  function todayKey(d){
+    d = d || new Date();
+    const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), day = String(d.getDate()).padStart(2,'0');
+    return y + '-' + m + '-' + day;
+  }
+
+  function daysBetween(dateStr1, dateStr2){
+    const d1 = new Date(dateStr1 + 'T00:00:00');
+    const d2 = new Date(dateStr2 + 'T00:00:00');
+    return Math.round((d2 - d1) / 86400000);
+  }
+
+  function defaultState(){
+    return {
+      startDate: todayKey(),
+      habits: [
+        {id:'h1', name:'Open my #1 task and work on it for just 2 minutes'},
+        {id:'h2', name:"Write tomorrow's single most important task before closing my laptop"},
+        {id:'h3', name:'One distraction-free focus block — even 10 minutes counts'}
+      ],
+      completions: {}
+    };
+  }
+
+  async function loadData(){
+    try{
+      if (window.storage && typeof window.storage.get === 'function') {
+        const res = await window.storage.get(STORAGE_KEY);
+        if(res && res.value) return JSON.parse(res.value);
+      }
+    }catch(e){ }
+    
+    try {
+      const localData = localStorage.getItem(STORAGE_KEY);
+      if (localData) return JSON.parse(localData);
+    } catch(e) { }
+
+    const d = defaultState();
+    await saveData(d);
+    return d;
+  }
+
+  async function saveData(data){
+    try{
+      if (window.storage && typeof window.storage.set === 'function') {
+        await window.storage.set(STORAGE_KEY, JSON.stringify(data));
+      }
+    }catch(e) {}
+    
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch(e) {}
+  }
+
+  function computeCurrentStreak(s){
+    let streak = 0;
+    const cursor = new Date();
+    const tKey = todayKey(cursor);
+    
+    const todaysCompCount = (s.completions[tKey] || []).length;
+    const totalHabits = s.habits.length;
+    const todayDone = totalHabits > 0 && todaysCompCount >= totalHabits;
+    
+    if(!todayDone) cursor.setDate(cursor.getDate() - 1);
+    while(true){
+      const k = todayKey(cursor);
+      if(k < s.startDate) break;
+      
+      const compCount = (s.completions[k] || []).length;
+      if(totalHabits > 0 && compCount >= totalHabits){
+        streak++;
+        cursor.setDate(cursor.getDate() - 1);
+      } else break;
+    }
+    return streak;
+  }
+
+  function computeLongestStreak(s){
+    let maxStreak = 0, current = 0;
+    const d = new Date(s.startDate + 'T00:00:00');
+    const end = new Date();
+    const totalHabits = s.habits.length;
+    while(d <= end){
+      const k = todayKey(d);
+      const compCount = (s.completions[k] || []).length;
+      const won = totalHabits > 0 && compCount >= totalHabits;
+      if(won){ current++; maxStreak = Math.max(maxStreak, current); }
+      else current = 0;
+      d.setDate(d.getDate() + 1);
+    }
+    return maxStreak;
+  }
+
+  const ZONES = [
+    {max:2,  color:'gold', text:"You're at peak motivation right now. Use it to make today's habit embarrassingly small, not to add more goals — the size you pick now is what has to survive the dip later."},
+    {max:6,  color:'gold', text:"Motivation usually starts fading right about now. That's the normal pattern, not a sign your habit, or you, is broken."},
+    {max:15, color:'rust', text:"You're in the dip. This is exactly where most people quit. The move isn't to push harder — it's to lower the bar even further and just do the smallest version today."},
+    {max:29, color:'teal', text:"You're climbing out of the dip. Things should be starting to feel a little less effortful than a week ago."},
+    {max:Infinity, color:'teal', text:"You're past the dip. This is about as automatic as it gets — the habit is running on its own momentum now."}
+  ];
+  const COLOR_VARS = {
+    gold:{border:'var(--sun)', bg:'var(--sun-tint)'},
+    rust:{border:'var(--rain)', bg:'var(--rain-tint)'},
+    teal:{border:'var(--clear)', bg:'var(--clear-tint)'}
+  };
+
+  function getPointAtX(pathEl, targetX){
+    const total = pathEl.getTotalLength();
+    let start = 0, end = total, point = pathEl.getPointAtLength(0);
+    for(let i=0; i<25; i++){
+      const mid = (start + end) / 2;
+      point = pathEl.getPointAtLength(mid);
+      if(point.x < targetX) start = mid; else end = mid;
+    }
+    return point;
+  }
+
+  function render(){
+    const todayK = todayKey();
+    const journeyDayRaw = Math.max(daysBetween(state.startDate, todayK), 0);
+    const journeyDayClamped = Math.min(journeyDayRaw, 30);
+
+    const cur = computeCurrentStreak(state);
+    const best = computeLongestStreak(state);
+    document.getElementById('streak-num').textContent = cur;
+    document.getElementById('best-num').textContent = best;
+    document.getElementById('streak-num').nextElementSibling.textContent = cur === 1 ? 'current streak (day)' : 'current streak (days)';
+
+    const zone = ZONES.find(z => journeyDayRaw <= z.max);
+    const colors = COLOR_VARS[zone.color];
+    const msgBox = document.getElementById('zone-message');
+    msgBox.textContent = zone.text;
+    msgBox.style.borderColor = colors.border;
+    msgBox.style.background = colors.bg;
+
+    const y = new Date(); y.setDate(y.getDate() - 1);
+    const yKey = todayKey(y);
+    const hasHistory = Object.keys(state.completions).some(k => (state.completions[k]||[]).length > 0);
+    const totalHabits = state.habits.length;
+    const yesterdayDone = totalHabits > 0 && (state.completions[yKey] || []).length >= totalHabits;
+    const todayDone = totalHabits > 0 && (state.completions[todayK] || []).length >= totalHabits;
+    
+    const banner = document.getElementById('missed-banner');
+    if(hasHistory && journeyDayRaw >= 1 && !yesterdayDone && !todayDone){
+      banner.style.display = 'block';
+      banner.textContent = "Looks like yesterday got skipped. That's okay, one miss doesn't break the system. The only rule that matters now: don't miss twice in a row.";
+    } else {
+      banner.style.display = 'none';
+    }
+
+    const list = document.getElementById('habit-list');
+    list.innerHTML = '';
+    const todaysComp = state.completions[todayK] || [];
+    if(state.habits.length === 0){
+      const p = document.createElement('p');
+      p.style.color = 'var(--text-muted)';
+      p.style.fontSize = '14px';
+      p.textContent = 'No habits yet — add one tiny action below to get started.';
+      list.appendChild(p);
+    }
+    state.habits.forEach(h => {
+      const done = todaysComp.indexOf(h.id) >= 0;
+      const row = document.createElement('div');
+      row.className = 'habit-row' + (done ? ' done' : '');
+
+      const chk = document.createElement('label');
+      chk.className = 'chk';
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.checked = done;
+      input.setAttribute('aria-label', h.name);
+      input.addEventListener('change', () => toggleHabit(h.id));
+      const circle = document.createElement('span');
+      circle.className = 'circle';
+      chk.appendChild(input);
+      chk.appendChild(circle);
+
+      const label = document.createElement('div');
+      label.className = 'habit-label';
+      label.textContent = h.name;
+
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'remove-btn';
+      removeBtn.setAttribute('aria-label', 'Remove habit: ' + h.name);
+      removeBtn.textContent = '\u00D7';
+      removeBtn.addEventListener('click', () => promptRemoveHabit(h.id));
+
+      row.appendChild(chk);
+      row.appendChild(label);
+      row.appendChild(removeBtn);
+      list.appendChild(row);
+    });
+
+    const grid = document.getElementById('chain-grid');
+    grid.innerHTML = '';
+    for(let i = 27; i >= 0; i--){
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const k = todayKey(d);
+      const comp = state.completions[k] || [];
+      const total = state.habits.length;
+      const sq = document.createElement('div');
+      sq.className = 'day-sq';
+      sq.title = k + ': ' + comp.length + (total ? ('/' + total) : '') + ' done';
+      if(k < state.startDate){
+        sq.classList.add('before-start');
+      } else if(total > 0 && comp.length >= total){
+        sq.classList.add('full');
+      } else if(comp.length > 0){
+        sq.classList.add('partial');
+      }
+      sq.textContent = d.getDate();
+      grid.appendChild(sq);
+    }
+
+    requestAnimationFrame(() => {
+      const path = document.getElementById('motivation-path');
+      const targetX = (journeyDayClamped / 30) * 700;
+      const pt = getPointAtX(path, targetX);
+      document.getElementById('curve-marker').setAttribute('cx', pt.x);
+      document.getElementById('curve-marker').setAttribute('cy', pt.y);
+      const line = document.getElementById('curve-marker-line');
+      line.setAttribute('x1', pt.x); line.setAttribute('x2', pt.x);
+      line.setAttribute('y1', pt.y); line.setAttribute('y2', 200);
+      const label = document.getElementById('curve-marker-label');
+      label.setAttribute('x', pt.x);
+      label.setAttribute('y', Math.max(pt.y - 12, 16));
+      label.textContent = 'DAY ' + journeyDayRaw;
+    });
+  }
+
+  async function toggleHabit(id){
+    const k = todayKey();
+    if(!state.completions[k]) state.completions[k] = [];
+    const idx = state.completions[k].indexOf(id);
+    let freshlyCompleted = false;
+
+    if(idx >= 0) {
+      state.completions[k].splice(idx, 1);
+    } else {
+      state.completions[k].push(id);
+      freshlyCompleted = true;
+    }
+    
+    await saveData(state);
+    render();
+
+    // Trigger confetti ONLY if every active habit has been checked off
+    const currentCompletions = state.completions[k] || [];
+    const allDone = state.habits.length > 0 && state.habits.every(h => currentCompletions.includes(h.id));
+
+    if(freshlyCompleted && allDone && typeof confetti === 'function') {
+      confetti({
+        particleCount: 90,
+        spread: 65,
+        origin: { y: 0.7 },
+        colors: ['#56BBE0', '#FF9FC0', '#F6B93B', '#9C8FE0']
+      });
+    }
+  }
+
+  async function addHabit(){
+    const input = document.getElementById('new-habit-input');
+    const name = input.value.trim();
+    if(!name) return;
+    state.habits.push({id: 'h' + Date.now(), name: name});
+    input.value = '';
+    await saveData(state);
+    render();
+  }
+
+  function promptRemoveHabit(id) {
+    habitIdToDelete = id;
+    document.getElementById('delete-modal').classList.add('active');
+  }
+
+  function closeDeleteModal() {
+    habitIdToDelete = null;
+    document.getElementById('delete-modal').classList.remove('active');
+  }
+
+  async function confirmRemoveHabit(){
+    if(habitIdToDelete) {
+      state.habits = state.habits.filter(h => h.id !== habitIdToDelete);
+      // Clean up historical target completion mismatches if desired, though tracking keys remain safe
+      await saveData(state);
+      render();
+    }
+    closeDeleteModal();
+  }
+
+  async function resetAll(){
+    if(!confirm('Reset all habit data? This clears your streak and history and cannot be undone.')) return;
+    state = defaultState();
+    await saveData(state);
+    render();
+  }
+
+  document.getElementById('add-habit-btn').addEventListener('click', addHabit);
+  document.getElementById('new-habit-input').addEventListener('keydown', e => {
+    if(e.key === 'Enter') addHabit();
+  });
+  document.getElementById('reset-link').addEventListener('click', resetAll);
+  
+  // Custom Modal event attachments
+  document.getElementById('modal-cancel-btn').addEventListener('click', closeDeleteModal);
+  document.getElementById('modal-confirm-btn').addEventListener('click', confirmRemoveHabit);
+
+  async function init(){
+    state = await loadData();
+    render();
+  }
+  init();
+})();
+</script>
+</body>
+</html>
